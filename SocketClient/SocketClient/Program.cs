@@ -28,7 +28,15 @@ namespace SocketClient
             //实现消息接收的方法
 
             socket.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(ReceiveMessage), socket);
-            Console.Read();
+
+            //接受用户的输入，将消息发送给服务器端
+            while (true)
+            {
+                var message = "Message from client:" + Console.ReadLine();
+                var outputBuffer = Encoding.Unicode.GetBytes(message);
+                socket.BeginSend(outputBuffer, 0, outputBuffer.Length, SocketFlags.None, null, null);
+            }
+           
         }
         static byte[] buffer = new byte[1024];
         
