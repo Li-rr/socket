@@ -36,7 +36,26 @@ namespace socketServer
                 timer.Enabled = true;
                 timer.Elapsed += (o, a) =>
                 {
-                    client.Send(Encoding.Unicode.GetBytes("Message from server at " + DateTime.Now.ToString()));
+                    //检测客户端socket的状态
+                    if(client.Connected)
+                    {
+                        try
+                        {
+                            client.Send(Encoding.Unicode.GetBytes("Message from server at " + DateTime.Now.ToString()));
+                        }
+                        catch (Exception ex)
+                        {
+
+                            Console.WriteLine(ex.Message);
+                        }
+                    }
+                    else
+                    {
+                        timer.Stop();
+                        timer.Enabled = false;
+                        Console.WriteLine("Client is disconnected, the timer is stop.");
+                    }
+                   // client.Send(Encoding.Unicode.GetBytes("Message from server at " + DateTime.Now.ToString()));
                  };
                 timer.Start();
             }), null);
