@@ -21,6 +21,8 @@ namespace socketServer
             socket.Listen(4);
 
             //开始接收客户端连接请求
+            socket.BeginAccept(new AsyncCallback(ClientAccepted), socket);
+
             socket.BeginAccept(new AsyncCallback((ar) =>
             {
                 //这就是客户端的实例
@@ -67,6 +69,51 @@ namespace socketServer
         }
         static byte[] buffer = new byte[1024];
 
+        public static void ClientAccepted(IAsyncResult ar)
+        {
+            var socket = ar.AsyncState as Socket;
+
+            //这就是客户端的Socket实例，我们后续可以将其保存起来
+            var client = socket.EndAccept(ar);
+
+            //给客户端发送一个欢迎消息
+            client.Send(Encoding.Unicode.GetBytes("Hi there, I accept you request at " + DateTime.Now.ToString()));
+
+            //实现每隔两秒钟给服务器发一个消息
+            //这里我们使用了一个定时器
+            var timer = new System.Timers.Timer();
+            timer.Interval = 2000D;
+            timer.Enabled = true;
+            timer.Elapsed += (o, a) =>
+            {
+                //检测客户端Socket的状态
+                if (client.Connected)
+                {
+                    try
+                    {
+                        client.Send(Encoding.Unicode.GetBytes("Message from server at " + DateTime.Now.ToString()));
+                    }
+                    catch (SocketException ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                }
+                else
+                {
+                    timer.Stop();
+                    timer.Enabled = false;
+                    Console.WriteLine("Client is disconnected, the timer is stop.");
+                }
+            };
+            timer.Start();
+
+
+            //接收客户端的消息(这个和在客户端实现的方式是一样的）
+            client.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(ReceiveMessage), client);
+
+            //准备接受下一个客户端请求
+            socket.BeginAccept(new AsyncCallback(ClientAccepted), socket);
+        }
         public static void ReceiveMessage(IAsyncResult ar)
         {
             try
