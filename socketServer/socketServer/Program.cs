@@ -58,9 +58,32 @@ namespace socketServer
                    // client.Send(Encoding.Unicode.GetBytes("Message from server at " + DateTime.Now.ToString()));
                  };
                 timer.Start();
+
+                //接受客户端的消息(这个和在客户端实现的方式是一样的)
+                client.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(ReceiveMessage), client);
             }), null);
             Console.WriteLine("Server is ready!");
             Console.Read();
+        }
+        static byte[] buffer = new byte[1024];
+
+        public static void ReceiveMessage(IAsyncResult ar)
+        {
+            try
+            {
+                var socket = ar.AsyncState as Socket;
+                var length = socket.EndReceive(ar);
+                var message = Encoding.Unicode.GetString(buffer, 0, length);
+
+                Console.WriteLine(message);
+                //接收下一个消息，（递归调用）
+                socket.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(ReceiveMessage), socket);
+            }
+            catch (Exception ex)
+            {
+
+                Console.WriteLine(ex.Message);
+            }
         }
     }
 }
