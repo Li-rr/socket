@@ -1,0 +1,4 @@
+D:\socket编程\SocketClient\SocketClient\bin\Debug\SocketClient.exe
+D:\socket编程\SocketClient\SocketClient\bin\Debug\SocketClient.pdb
+D:\socket编程\SocketClient\SocketClient\obj\Debug\SocketClient.exe
+D:\socket编程\SocketClient\SocketClient\obj\Debug\SocketClient.pdb

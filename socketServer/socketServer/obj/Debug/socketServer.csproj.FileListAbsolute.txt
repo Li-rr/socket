@@ -1,0 +1,5 @@
+D:\socket编程\socketServer\socketServer\bin\Debug\socketServer.exe
+D:\socket编程\socketServer\socketServer\bin\Debug\socketServer.pdb
+D:\socket编程\socketServer\socketServer\obj\Debug\socketServer.csprojResolveAssemblyReference.cache
+D:\socket编程\socketServer\socketServer\obj\Debug\socketServer.exe
+D:\socket编程\socketServer\socketServer\obj\Debug\socketServer.pdb
