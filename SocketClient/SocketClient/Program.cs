@@ -15,18 +15,42 @@ namespace SocketClient
             //连接到指定服务器的指定端口
             socket.Connect("localhost", 4530);
 
+           
+
+          //  var buffer = new byte[1024]; //设置一个缓冲区，保存数据
+            //socket.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback((ar) =>
+            //{
+            //    var length = socket.EndReceive(ar);
+            //    var message = Encoding.Unicode.GetString(buffer, 0, length);
+            //    Console.WriteLine(message);
+            //}), null);
+            Console.WriteLine("connect to the server");
             //实现消息接收的方法
 
-            var buffer = new byte[1024]; //设置一个缓冲区，保存数据
-            socket.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback((ar) =>
-            {
-                var length = socket.EndReceive(ar);
-                var message = Encoding.Unicode.GetString(buffer, 0, length);
-                Console.WriteLine(message);
-            }), null);
-
-            Console.WriteLine("connect to the server");
+            socket.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(ReceiveMessage), socket);
             Console.Read();
+        }
+        static byte[] buffer = new byte[1024];
+        
+        public static void ReceiveMessage(IAsyncResult ar)
+        {
+            try
+            {
+                var socket = ar.AsyncState as Socket;
+
+                var length = socket.EndReceive(ar);
+
+                var message = Encoding.Unicode.GetString(buffer, 0, length);
+
+                Console.WriteLine(message);
+
+                socket.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(ReceiveMessage), socket);
+            }
+            catch (Exception ex)
+            {
+
+                Console.WriteLine(ex.Message);
+            }
         }
     }
 }
