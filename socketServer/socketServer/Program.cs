@@ -19,6 +19,17 @@ namespace socketServer
 
             //启动监听，并且设置一个最大的队列长度
             socket.Listen(4);
+
+            //开始接收客户端连接请求
+            socket.BeginAccept(new AsyncCallback((ar) =>
+            {
+                //这就是客户端的实例
+                var client = socket.EndAccept(ar);
+
+                //给客户端发送一个欢迎消息
+                client.Send(Encoding.Unicode.GetBytes("Hi,there,I accept you request you request at "+DateTime.Now.ToString()));
+
+            }), null);
             Console.WriteLine("Server is ready!");
             Console.Read();
         }
