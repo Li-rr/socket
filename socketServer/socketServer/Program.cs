@@ -29,6 +29,16 @@ namespace socketServer
                 //给客户端发送一个欢迎消息
                 client.Send(Encoding.Unicode.GetBytes("Hi,there,I accept you request you request at "+DateTime.Now.ToString()));
 
+                //实现每隔两秒给客户端发一个消息
+                //这里使用了一个定时器
+                var timer = new System.Timers.Timer();
+                timer.Interval = 2000D;
+                timer.Enabled = true;
+                timer.Elapsed += (o, a) =>
+                {
+                    client.Send(Encoding.Unicode.GetBytes("Message from server at " + DateTime.Now.ToString()));
+                 };
+                timer.Start();
             }), null);
             Console.WriteLine("Server is ready!");
             Console.Read();
